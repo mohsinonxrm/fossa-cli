@@ -101,6 +101,7 @@ import Prettyprinter.Render.Terminal (
  )
 import Srclib.Converter qualified as Srclib
 import Srclib.Types (Locator (locatorProject, locatorRevision), SourceUnit, parseLocator)
+import Srclib.Types qualified as Srclib
 import Strategy.Bundler qualified as Bundler
 import Strategy.Cargo qualified as Cargo
 import Strategy.Carthage qualified as Carthage
@@ -400,7 +401,7 @@ analyzeVSI VSIAnalysisEnabled (Just apiOpts) dir filters skipResolving = do
   if not $ null skippedLocators
     then do
       logInfo "Skipping resolution of the following locators:"
-      traverse_ (logInfo . pretty . VSI.renderLocator) skippedLocators
+      traverse_ (logInfo . pretty . Srclib.renderLocator) skippedLocators
     else pure ()
 
   results <- analyzeVSIDeps dir apiOpts filters skipResolving

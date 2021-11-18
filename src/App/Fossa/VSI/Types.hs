@@ -62,10 +62,23 @@ instance ToDiagnostic LocatorParseError where
 -- we can't perform this resolution.
 -- To handle this case we provide users with an escape hatch, which is an argument allowing them to skip resolving some of their dependencies.
 -- This type canonicalizes that request.
-newtype SkipResolution = SkipResolution {unVSISkipResolution :: Set Locator}
+newtype SkipResolution = SkipResolution {unVSISkipResolution :: Set Srclib.Locator}
 
 shouldSkipResolving :: SkipResolution -> Locator -> Bool
-shouldSkipResolving skip loc = loc `Set.member` (unVSISkipResolution skip)
+shouldSkipResolving skip loc = any (looselyMatches loc) (Set.elems $ unVSISkipResolution skip)
+
+-- | A VSI Locator loosely matches a Srclib Locator if either:
+-- * The Srclib Locator specifies a revision, and all fields of the respective locators match.
+-- * The Srclib Locator does not specify a revision, but the remaining fields match.
+looselyMatches :: Locator -> Srclib.Locator -> Bool
+looselyMatches
+  Locator{locatorFetcher = vsiFetcher, locatorProject = vsiProject, locatorRevision = vsiRevision}
+  Srclib.Locator{locatorFetcher = srclibFetcher, locatorProject = srclibProject, locatorRevision = srclibRevision} =
+    case srclibRevision of
+      Nothing -> baseMatches
+      Just revision -> baseMatches && revision == vsiRevision
+    where
+      baseMatches = srclibFetcher == vsiFetcher && srclibProject == vsiProject
 
 toDependency :: Locator -> Either ToDependencyError Dependency
 toDependency locator =

@@ -129,6 +129,7 @@ import Options.Applicative (
   (<**>),
  )
 import Path (Abs, Dir, File, Path, Rel, parseAbsDir, parseRelDir)
+import Srclib.Types qualified as Srclib
 import System.Environment (lookupEnv)
 import System.Exit (die)
 import System.Info qualified as SysInfo
@@ -459,11 +460,11 @@ iatAssertionOpt =
   (AnalyzeVSIAssertionEnabled <$> strOption (long "experimental-link-project-binary" <> hidden))
     <|> pure AnalyzeVSIAssertionDisabled
 
-skipVSIGraphResolutionOpt :: Parser VSI.Locator
+skipVSIGraphResolutionOpt :: Parser Srclib.Locator
 skipVSIGraphResolutionOpt = (option (eitherReader parseLocator) (long "experimental-skip-vsi-graph" <> hidden))
   where
-    parseLocator :: String -> Either String VSI.Locator
-    parseLocator s = case VSI.parseLocator (toText s) of
+    parseLocator :: String -> Either String Srclib.Locator
+    parseLocator s = case Srclib.validLocator (Srclib.parseLocator $ toText s) of
       Left err -> Left $ toString (toText err)
       Right loc -> pure loc
 
@@ -734,7 +735,7 @@ data AnalyzeOptions = AnalyzeOptions
   , analyzeVSIMode :: VSIAnalysisMode
   , analyzeBinaryDiscoveryMode :: BinaryDiscoveryMode
   , analyzeAssertMode :: AnalyzeVSIAssertionMode
-  , analyzeSkipVSIGraphResolution :: [VSI.Locator]
+  , analyzeSkipVSIGraphResolution :: [Srclib.Locator]
   , monorepoAnalysisOpts :: MonorepoAnalysisOpts
   , analyzeBaseDir :: FilePath
   }

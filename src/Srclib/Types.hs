@@ -10,11 +10,12 @@ module Srclib.Types (
   Locator (..),
   renderLocator,
   parseLocator,
+  validLocator,
 ) where
 
 import Data.Aeson
 import Data.Maybe (fromMaybe)
-import Data.String.Conversion (toText)
+import Data.String.Conversion (ToText, toText)
 import Data.Text (Text)
 import Data.Text qualified as Text
 import Path (File, SomeBase)
@@ -91,6 +92,22 @@ parseLocator raw = Locator fetcher project (if Text.null revision then Nothing e
     (fetcher, xs) = Text.breakOn "+" raw
     (project, xs') = Text.breakOn "$" (Text.drop 1 xs)
     revision = Text.drop 1 xs'
+
+data LocatorParseError
+  = ProjectRequired Locator
+  | FetcherRequired Locator
+  deriving (Eq, Ord, Show)
+
+instance ToText LocatorParseError where
+  toText (ProjectRequired locator) =
+    "Project name is required on locator: " <> renderLocator locator
+  toText (FetcherRequired locator) =
+    "Fetcher is required on locator: " <> renderLocator locator
+
+validLocator :: Locator -> Either LocatorParseError Locator
+validLocator loc@Locator{..} | Text.null locatorFetcher = Left $ FetcherRequired loc
+validLocator loc@Locator{..} | Text.null locatorProject = Left $ ProjectRequired loc
+validLocator loc = pure loc
 
 instance ToJSON SourceUnit where
   toJSON SourceUnit{..} =
