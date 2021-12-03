@@ -175,6 +175,13 @@ library
     App.Fossa.VSI.IAT.Types
     App.Fossa.VSI.Types
     App.Fossa.VSIDeps
+    App.NewFossa.Config.Analyze
+    App.NewFossa.Config.Common
+    App.NewFossa.Config.Utils
+    App.NewFossa.ConfigFile
+    App.NewFossa.EnvironmentVars
+    App.NewFossa.Main
+    App.NewFossa.Subcommand
     App.OptionExtensions
     App.Pathfinder.Main
     App.Pathfinder.Scan
@@ -334,6 +341,13 @@ executable pathfinder
   import:         lang
   main-is:        Main.hs
   hs-source-dirs: app/pathfinder
+  build-depends:  spectrometer
+  ghc-options:    -threaded
+
+executable newfossa
+  import:         lang
+  main-is:        Main.hs
+  hs-source-dirs: app/newfossa
   build-depends:  spectrometer
   ghc-options:    -threaded
 

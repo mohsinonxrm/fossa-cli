@@ -9,7 +9,7 @@ module Discovery.Filters (
   FilterResult (..),
   apply,
   filterIsVSIOnly,
-) where
+noFilters) where
 
 import Data.List ((\\))
 import Data.List.NonEmpty qualified as NE
@@ -53,6 +53,11 @@ data FilterCombination = FilterCombination
   { combinedTargets :: [TargetFilter]
   , combinedPaths :: [Path Rel Dir]
   }
+
+noFilters :: AllFilters
+noFilters = AllFilters mempty noCombo noCombo
+  where
+    noCombo = FilterCombination mempty mempty
 
 -- applyFilters determines if legacy filters are present and if they need to converted to `TargetFilters` for filtering.
 applyFilters :: AllFilters -> Text -> Path Rel Dir -> FoundTargets -> Maybe FoundTargets

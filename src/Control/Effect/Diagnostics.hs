@@ -66,6 +66,9 @@ class ToDiagnostic a where
 instance ToDiagnostic Text where
   renderDiagnostic = pretty
 
+instance ToDiagnostic (Doc AnsiStyle) where
+  renderDiagnostic = id
+
 instance ToDiagnostic SomeException where
   renderDiagnostic (SomeException exc) =
     "An exception occurred: " <> pretty (show exc)
