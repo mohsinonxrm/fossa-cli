@@ -21,6 +21,7 @@ import Options.Applicative (
   help,
   helpShowGlobals,
   helper,
+  hidden,
   hsubparser,
   info,
   infoOption,
@@ -37,7 +38,10 @@ appMain :: IO ()
 appMain = join $ customExecParser mainPrefs $ info (subcommands <**> helper <**> versionOpt) progData
 
 versionOpt :: Parser (a -> a)
-versionOpt = infoOption (toString fullVersionDescription) (long "version" <> short 'V' <> help "show version information")
+versionOpt =
+  infoOption (toString fullVersionDescription) $
+    mconcat
+      [long "version", short 'V', help "show version information", hidden]
 
 progData :: InfoMod (IO ())
 progData = fullDesc <> header "fossa-cli - Flexible, performant dependency analysis"

@@ -217,6 +217,8 @@ doAnalyze ::
   AnalyzeConfig ->
   m ()
 doAnalyze _ = do
+  -- theoretically, this works like `App.Fossa.Analyze.analyzeMain`
+  -- for now, it just tests the effects and prints a dummy string
   useEffects
   logError "Analyze not implmented"
   logStdout "Here's a result!"
