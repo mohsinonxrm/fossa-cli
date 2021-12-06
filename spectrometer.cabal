@@ -446,6 +446,7 @@ test-suite integration-tests
     Analysis.FixtureExpectationUtils
     Analysis.FixtureUtils
     Analysis.Python.PoetrySpec
+    Analysis.RubySpec
 
   build-tool-depends: hspec-discover:hspec-discover ^>=2.8.2
   build-depends:
